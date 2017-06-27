@@ -20,6 +20,7 @@ move(){
      this.posY >= gameplay.computerPaddle.posY && this.posY <
      (gameplay.computerPaddle.posY + gameplay.computerPaddle.height)) {
        this.speedX = -Math.abs(this.speedX);
+       this.speedY = ((this.posY - (gameplay.computerPaddle.posY + gameplay.computerPaddle.height/2))*0.35);
   }
 
   // Check player paddle collision
@@ -28,6 +29,7 @@ move(){
      this.posY >= gameplay.playerPaddle.posY && this.posY <
      (gameplay.playerPaddle.posY + gameplay.playerPaddle.height)) {
        this.speedX = Math.abs(this.speedX);
+       this.speedY = ((this.posY - (gameplay.playerPaddle.posY + gameplay.playerPaddle.height/2))*0.35);
   }
 
 
@@ -145,6 +147,7 @@ class Game{
   constructor(canvas){
     this.c = canvas;
     this.ctx = this.c.getContext('2d');
+    this.ctx.textAlign = 'center';
     this.forgroundColor = '#0fbf49';
     this.board = new Board(canvas);
     this.ball = new Ball(this.c.width/2, this.c.height/2);
@@ -165,9 +168,26 @@ class Game{
 
   draw(){
     this.board.draw();
+    this.drawScores();
+    this.drawTitle();
     this.ball.draw();
     this.playerPaddle.draw();
     this.computerPaddle.draw();
+  }
+
+  drawScores() {
+    this.ctx.font = '16px monospace';
+    this.ctx.fillStyle = this.forgroundColor;
+    this.ctx.fillText('PLAYER SCORE', c.width*0.1, c.height*0.1);
+    this.ctx.fillText(this.playerPaddle.score, c.width*0.1, (c.height*0.1)+20);
+    this.ctx.fillText('COMPUTER SCORE', c.width*0.9, c.height*0.1);
+    this.ctx.fillText(this.computerPaddle.score, c.width*0.9, (c.height*0.1)+20);
+  }
+
+  drawTitle() {
+    this.ctx.font = '100px monospace';
+    this.ctx.strokeStyle = this.forgroundColor;
+    this.ctx.strokeText('P O N G', c.width/2, 100);
   }
 
   score(loc) {

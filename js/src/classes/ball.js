@@ -20,6 +20,7 @@ move(){
      this.posY >= gameplay.computerPaddle.posY && this.posY <
      (gameplay.computerPaddle.posY + gameplay.computerPaddle.height)) {
        this.speedX = -Math.abs(this.speedX);
+       this.speedY = ((this.posY - (gameplay.computerPaddle.posY + gameplay.computerPaddle.height/2))*0.35);
   }
 
   // Check player paddle collision
@@ -28,6 +29,7 @@ move(){
      this.posY >= gameplay.playerPaddle.posY && this.posY <
      (gameplay.playerPaddle.posY + gameplay.playerPaddle.height)) {
        this.speedX = Math.abs(this.speedX);
+       this.speedY = ((this.posY - (gameplay.playerPaddle.posY + gameplay.playerPaddle.height/2))*0.35);
   }
 
 
