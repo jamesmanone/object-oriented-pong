@@ -18,9 +18,9 @@ class PlayerPaddle extends Paddle {
 
   go() {
     if(this.up) {
-      this.move(-5);
+      this.move(-7);
     } else if(this.down) {
-      this.move(5);
+      this.move(7);
     }
   }
 }

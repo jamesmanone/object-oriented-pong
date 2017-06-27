@@ -34,8 +34,10 @@ move(){
 
 
   // Check for wall collision
-  if(this.posY > (c.height - this.diam) || this.posY < this.diam) {
-    this.speedY = -this.speedY;
+  if(this.posY > c.height - this.diam) {
+    this.speedY = Math.abs(this.speedY)*-1;
+  } else if (this.posY < this.diam) {
+    this.speedY = Math.abs(this.speedY);
   }
 
   // Move ball
@@ -80,7 +82,7 @@ class Board{
 
 class Paddle{
   constructor(posY, player=false){
-    this.height = 50;
+    this.height = 70;
     this.width = 10;
     this.score = 0;
     this.offset = 10;
@@ -108,10 +110,10 @@ class ComputerPaddle extends Paddle {
   }
 
   ai() {
-    if(gameplay.ball.posY > this.posY + (this.height/2)) {
-      this.move(3);
-    } else if(gameplay.ball.posY < this.posY + (this.height/2)) {
-      this.move(-3);
+    if(gameplay.ball.posY > this.posY + this.height*0.65) {
+      this.move(5);
+    } else if(gameplay.ball.posY < this.posY - this.height*0.35) {
+      this.move(-5);
     }
   }
 }
@@ -136,9 +138,9 @@ class PlayerPaddle extends Paddle {
 
   go() {
     if(this.up) {
-      this.move(-5);
+      this.move(-7);
     } else if(this.down) {
-      this.move(5);
+      this.move(7);
     }
   }
 }

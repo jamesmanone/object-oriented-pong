@@ -1,6 +1,6 @@
 class Paddle{
   constructor(posY, player=false){
-    this.height = 50;
+    this.height = 70;
     this.width = 10;
     this.score = 0;
     this.offset = 10;

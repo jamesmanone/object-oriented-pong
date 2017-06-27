@@ -4,10 +4,10 @@ class ComputerPaddle extends Paddle {
   }
 
   ai() {
-    if(gameplay.ball.posY > this.posY + (this.height/2)) {
-      this.move(3);
-    } else if(gameplay.ball.posY < this.posY + (this.height/2)) {
-      this.move(-3);
+    if(gameplay.ball.posY > this.posY + this.height*0.65) {
+      this.move(5);
+    } else if(gameplay.ball.posY < this.posY - this.height*0.35) {
+      this.move(-5);
     }
   }
 }

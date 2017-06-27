@@ -34,8 +34,10 @@ move(){
 
 
   // Check for wall collision
-  if(this.posY > (c.height - this.diam) || this.posY < this.diam) {
-    this.speedY = -this.speedY;
+  if(this.posY > c.height - this.diam) {
+    this.speedY = Math.abs(this.speedY)*-1;
+  } else if (this.posY < this.diam) {
+    this.speedY = Math.abs(this.speedY);
   }
 
   // Move ball
