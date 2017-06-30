@@ -3,6 +3,7 @@ const concat = require('gulp-concat');
 
 gulp.task('default', () => {
   gulp.src([
+    'js/src/vars.js',
     'js/src/classes/ball.js',
     'js/src/classes/board.js',
     'js/src/classes/paddles/paddle.js',

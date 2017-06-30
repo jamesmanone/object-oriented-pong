@@ -16,20 +16,20 @@ move(){
   }
 
   // Check computer paddle collision
-  if(this.posX + (this.diam/2) >= gameplay.computerPaddle.posX &&
-     this.posY >= gameplay.computerPaddle.posY && this.posY <
-     (gameplay.computerPaddle.posY + gameplay.computerPaddle.height)) {
+  if(this.posX + (this.diam/2) >= computerPaddle.posX &&
+     this.posY >= computerPaddle.posY && this.posY <
+     (computerPaddle.posY + computerPaddle.height)) {
        this.speedX = -Math.abs(this.speedX);
-       this.speedY = ((this.posY - (gameplay.computerPaddle.posY + gameplay.computerPaddle.height/2))*0.35);
+       this.speedY = ((this.posY - (computerPaddle.posY + computerPaddle.height/2))*0.35);
   }
 
   // Check player paddle collision
-  if((this.posX - (this.diam/2)) <= (gameplay.playerPaddle.posX + gameplay.playerPaddle.width) &&
+  if((this.posX - (this.diam/2)) <= (playerPaddle.posX + playerPaddle.width) &&
 
-     this.posY >= gameplay.playerPaddle.posY && this.posY <
-     (gameplay.playerPaddle.posY + gameplay.playerPaddle.height)) {
+     this.posY >= playerPaddle.posY && this.posY <
+     (playerPaddle.posY + playerPaddle.height)) {
        this.speedX = Math.abs(this.speedX);
-       this.speedY = ((this.posY - (gameplay.playerPaddle.posY + gameplay.playerPaddle.height/2))*0.35);
+       this.speedY = ((this.posY - (playerPaddle.posY + playerPaddle.height/2))*0.35);
   }
 
 
@@ -46,10 +46,10 @@ move(){
 }
 
   draw(){
-    gameplay.ctx.fillStyle = gameplay.forgroundColor;
-    gameplay.ctx.beginPath();
-    gameplay.ctx.arc(this.posX, this.posY, this.diam, 0, 2*Math.PI);
-    gameplay.ctx.fill();
+    ctx.fillStyle = gameplay.forgroundColor;
+    ctx.beginPath();
+    ctx.arc(this.posX, this.posY, this.diam, 0, 2*Math.PI);
+    ctx.fill();
   }
 
   reset() {

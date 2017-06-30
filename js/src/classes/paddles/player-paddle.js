@@ -1,6 +1,6 @@
 class PlayerPaddle extends Paddle {
   constructor(){
-    super(c.height*0.66, true);
+    super(c.height*0.66-10, true);
     this.up = false;
     this.down = false;
     document.addEventListener('keydown', e => {
@@ -17,10 +17,11 @@ class PlayerPaddle extends Paddle {
   }
 
   go() {
-    if(this.up) {
-      this.move(-7);
-    } else if(this.down) {
-      this.move(7);
-    }
+    ((this.up && this.move(-7)) || (this.down && this.move(7)));
+    // if(this.up) {
+    //   this.move(-7);
+    // } else if(this.down) {
+    //   this.move(7);
+    // }
   }
 }

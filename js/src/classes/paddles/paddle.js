@@ -5,11 +5,7 @@ class Paddle{
     this.score = 0;
     this.offset = 10;
     this.posY = posY - (this.height/2);
-    if(player) {
-      this.posX = this.offset;
-    } else {
-      this.posX = c.width - this.width - this.offset;
-    }
+    this.posX = player ? this.offset : c.width - this.width - this.offset;
   }
 
   move(val) {
@@ -17,7 +13,7 @@ class Paddle{
   }
 
   draw() {
-    gameplay.ctx.fillStyle = gameplay.forgroundColor;
-    gameplay.ctx.fillRect(this.posX, this.posY, this.width, this.height);
+    ctx.fillStyle = gameplay.forgroundColor;
+    ctx.fillRect(this.posX, this.posY, this.width, this.height);
   }
 }

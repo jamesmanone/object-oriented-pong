@@ -1,3 +1,5 @@
+let c, ctx, gameplay, engineLoop, ball, playerPaddle, computerPaddle, credits;
+
 class Ball {
   constructor(posX, posY){
     this.posX = posX;
@@ -16,20 +18,20 @@ move(){
   }
 
   // Check computer paddle collision
-  if(this.posX + (this.diam/2) >= gameplay.computerPaddle.posX &&
-     this.posY >= gameplay.computerPaddle.posY && this.posY <
-     (gameplay.computerPaddle.posY + gameplay.computerPaddle.height)) {
+  if(this.posX + (this.diam/2) >= computerPaddle.posX &&
+     this.posY >= computerPaddle.posY && this.posY <
+     (computerPaddle.posY + computerPaddle.height)) {
        this.speedX = -Math.abs(this.speedX);
-       this.speedY = ((this.posY - (gameplay.computerPaddle.posY + gameplay.computerPaddle.height/2))*0.35);
+       this.speedY = ((this.posY - (computerPaddle.posY + computerPaddle.height/2))*0.35);
   }
 
   // Check player paddle collision
-  if((this.posX - (this.diam/2)) <= (gameplay.playerPaddle.posX + gameplay.playerPaddle.width) &&
+  if((this.posX - (this.diam/2)) <= (playerPaddle.posX + playerPaddle.width) &&
 
-     this.posY >= gameplay.playerPaddle.posY && this.posY <
-     (gameplay.playerPaddle.posY + gameplay.playerPaddle.height)) {
+     this.posY >= playerPaddle.posY && this.posY <
+     (playerPaddle.posY + playerPaddle.height)) {
        this.speedX = Math.abs(this.speedX);
-       this.speedY = ((this.posY - (gameplay.playerPaddle.posY + gameplay.playerPaddle.height/2))*0.35);
+       this.speedY = ((this.posY - (playerPaddle.posY + playerPaddle.height/2))*0.35);
   }
 
 
@@ -46,10 +48,10 @@ move(){
 }
 
   draw(){
-    gameplay.ctx.fillStyle = gameplay.forgroundColor;
-    gameplay.ctx.beginPath();
-    gameplay.ctx.arc(this.posX, this.posY, this.diam, 0, 2*Math.PI);
-    gameplay.ctx.fill();
+    ctx.fillStyle = gameplay.forgroundColor;
+    ctx.beginPath();
+    ctx.arc(this.posX, this.posY, this.diam, 0, 2*Math.PI);
+    ctx.fill();
   }
 
   reset() {
@@ -65,17 +67,13 @@ move(){
 }
 
 class Board{
-  constructor(canvas){
-    this.height = canvas.height;
-    this.width = canvas.width;
-  }
   // Draw the game board
-  draw() {
-    gameplay.ctx.fillStyle = 'black';
-    gameplay.ctx.fillRect(0, 0, this.width, this.height);
-    gameplay.ctx.fillStyle = gameplay.forgroundColor;
+  static draw() {
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, c.width, c.height);
+    ctx.fillStyle = gameplay.forgroundColor;
     for(let i=5; i<c.height-5; i+=35) {
-      gameplay.ctx.fillRect((c.width/2)-3, i, 6, 30);
+      ctx.fillRect((c.width/2)-3, i, 6, 30);
     }
   }
 }
@@ -87,11 +85,7 @@ class Paddle{
     this.score = 0;
     this.offset = 10;
     this.posY = posY - (this.height/2);
-    if(player) {
-      this.posX = this.offset;
-    } else {
-      this.posX = c.width - this.width - this.offset;
-    }
+    this.posX = player ? this.offset : c.width - this.width - this.offset;
   }
 
   move(val) {
@@ -99,8 +93,8 @@ class Paddle{
   }
 
   draw() {
-    gameplay.ctx.fillStyle = gameplay.forgroundColor;
-    gameplay.ctx.fillRect(this.posX, this.posY, this.width, this.height);
+    ctx.fillStyle = gameplay.forgroundColor;
+    ctx.fillRect(this.posX, this.posY, this.width, this.height);
   }
 }
 
@@ -110,9 +104,9 @@ class ComputerPaddle extends Paddle {
   }
 
   ai() {
-    if(gameplay.ball.posY > this.posY + this.height*0.65) {
+    if(ball.posY > this.posY + this.height*0.6) {
       this.move(5);
-    } else if(gameplay.ball.posY < this.posY - this.height*0.35) {
+    } else if(ball.posY < this.posY + this.height*0.4) {
       this.move(-5);
     }
   }
@@ -120,7 +114,7 @@ class ComputerPaddle extends Paddle {
 
 class PlayerPaddle extends Paddle {
   constructor(){
-    super(c.height*0.66, true);
+    super(c.height*0.66-10, true);
     this.up = false;
     this.down = false;
     document.addEventListener('keydown', e => {
@@ -137,79 +131,125 @@ class PlayerPaddle extends Paddle {
   }
 
   go() {
-    if(this.up) {
-      this.move(-7);
-    } else if(this.down) {
-      this.move(7);
-    }
+    ((this.up && this.move(-7)) || (this.down && this.move(7)));
+    // if(this.up) {
+    //   this.move(-7);
+    // } else if(this.down) {
+    //   this.move(7);
+    // }
   }
 }
 
 class Game{
-  constructor(canvas){
-    this.c = canvas;
-    this.ctx = this.c.getContext('2d');
-    this.ctx.textAlign = 'center';
+  constructor(){
     this.forgroundColor = '#0fbf49';
-    this.board = new Board(canvas);
-    this.ball = new Ball(this.c.width/2, this.c.height/2);
-    this.playerPaddle = new PlayerPaddle();
-    this.computerPaddle = new ComputerPaddle();
+    ball = new Ball(c.width/2, c.height/2);
+    playerPaddle = new PlayerPaddle();
+    computerPaddle = new ComputerPaddle();
     this.frameRate = 30;
   }
 
   run(){
-    setInterval(() => {this.physics();this.draw();}, 1000/this.frameRate);
+    engineLoop = setInterval(() => {this.motion();this.draw();}, 1000/this.frameRate);
   }
 
-  physics(){
-    this.ball.move();
-    this.computerPaddle.ai();
-    this.playerPaddle.go();
+  motion(){
+    ball.move();
+    computerPaddle.ai();
+    playerPaddle.go();
   }
 
   draw(){
-    this.board.draw();
+    Board.draw();
     this.drawScores();
     this.drawTitle();
-    this.ball.draw();
-    this.playerPaddle.draw();
-    this.computerPaddle.draw();
+    ball.draw();
+    playerPaddle.draw();
+    computerPaddle.draw();
   }
 
   drawScores() {
-    this.ctx.font = '16px monospace';
-    this.ctx.fillStyle = this.forgroundColor;
-    this.ctx.fillText('PLAYER SCORE', c.width*0.1, c.height*0.1);
-    this.ctx.fillText(this.playerPaddle.score, c.width*0.1, (c.height*0.1)+20);
-    this.ctx.fillText('COMPUTER SCORE', c.width*0.9, c.height*0.1);
-    this.ctx.fillText(this.computerPaddle.score, c.width*0.9, (c.height*0.1)+20);
+    ctx.font = '16px monospace';
+    ctx.fillStyle = this.forgroundColor;
+    ctx.fillText('PLAYER SCORE', c.width*0.1, c.height*0.1);
+    ctx.fillText(playerPaddle.score, c.width*0.1, (c.height*0.1)+20);
+    ctx.fillText('COMPUTER SCORE', c.width*0.9, c.height*0.1);
+    ctx.fillText(computerPaddle.score, c.width*0.9, (c.height*0.1)+20);
   }
 
   drawTitle() {
-    this.ctx.font = '100px monospace';
-    this.ctx.strokeStyle = this.forgroundColor;
-    this.ctx.strokeText('P O N G', c.width/2, 100);
+    ctx.font = '100px monospace';
+    ctx.strokeStyle = this.forgroundColor;
+    ctx.strokeText('P O N G', c.width/2, 100);
   }
 
   score(loc) {
-    if(loc > (this.c.width/2)) {
-      this.playerPaddle.score++;
-    } else if(loc < (this.c.width/2)) {
-      this.computerPaddle.score++;
+    if(loc > c.width/2) {
+      playerPaddle.score++;
+    } else if(loc < c.width/2) {
+      computerPaddle.score++;
     }
-    if(this.playerPaddle.score >= 7) {
-
-    } else if(this.computerPaddle.score >= 7) {
-
+    if(playerPaddle.score >= 10) {
+      this.gameover(true);
+    } else if(computerPaddle.score >= 10) {
+      this.gameover(false);
     }
+  }
+
+  gameover(playerWins) {
+    clearInterval(engineLoop);
+    setTimeout(() => {
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.font = '100px monospace';
+      ctx.fillStyle = this.forgroundColor;
+      if(playerWins) {
+        console.log('player');
+        ctx.fillText(' You Win!', c.width/2, c.height/2);
+      } else {
+        console.log('computer');
+        ctx.fillText(' You Lose!', c.width/2, c.height/2);
+      }
+      ctx.font = '16px monospace';
+      ctx.fillText('Click to continue...', c.width/2, c.height*0.75);
+    }, 10);
+    c.addEventListener('click', resetGame);
   }
 }
 
-let c;
-let gameplay;
+
 window.onload = () => {
   c = document.getElementById('canvas');
-  gameplay = new Game(c);
-  gameplay.run();
+  ctx = c.getContext('2d');
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, c.width, c.height);
+  ctx.fillStyle = '#0fbf49';
+  ctx.strokeStyle = '#0fbf49';
+  ctx.font = '100px monospace';
+  ctx.strokeText('P O N G', c.width/2, 100);
+  ctx.font = '20px monospace';
+  ctx.fillText('Click to continue', c.width/2, c.height*0.75);
+  credits = setInterval(() => {
+    ctx.fillText('Credits 0/2', c.width/2, c.height*0.75 + 40);
+    setTimeout(() => {
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, c.height*0.75 + 20, c.width, c.height/4);
+      ctx.fillStyle = '#0fbf49';
+    }, 600);
+  }, 1200);
+  c.addEventListener('click', start);
 };
+
+function start() {
+  c.removeEventListener('click', start);
+  clearInterval(credits);
+  gameplay = new Game();
+  gameplay.run();
+}
+
+function resetGame() {
+  gameplay = new Game();
+  gameplay.run();
+  c.removeEventListener('click', resetGame);
+}

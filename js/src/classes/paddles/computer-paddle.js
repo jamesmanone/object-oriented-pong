@@ -4,9 +4,9 @@ class ComputerPaddle extends Paddle {
   }
 
   ai() {
-    if(gameplay.ball.posY > this.posY + this.height*0.65) {
+    if(ball.posY > this.posY + this.height*0.6) {
       this.move(5);
-    } else if(gameplay.ball.posY < this.posY - this.height*0.35) {
+    } else if(ball.posY < this.posY + this.height*0.4) {
       this.move(-5);
     }
   }
